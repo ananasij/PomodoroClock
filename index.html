@@ -3,8 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
+    <script src="jquery.min.js"></script>
+    <script src="main.js"></script>
 </head>
 <body>
+<h4>Set work session length:</h4>
+<p class="js-timerLength js-workTimerLength"></p>
+<button class="js-btn-updateTimer" data-timer="workTimer" data-update="plus"> + </button>
+<button class="js-btn-updateTimer" data-timer="workTimer" data-update="minus" > - </button>
+<h4>Set rest length:</h4>
+<p class="js-timerLength js-restTimerLength"></p>
+<button class="js-btn-updateTimer" data-timer="restTimer" data-update="plus" > + </button>
+<button class="js-btn-updateTimer" data-timer="restTimer" data-update="minus" > - </button>
+<h4>Start/pause timer:</h4>
+<button class="js-btn-switch"> Start/Pause </button>
+<p class="js-currentTimer"></p>
+<p class="js-timer"></p>
 
 </body>
 </html>
