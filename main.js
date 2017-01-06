@@ -68,7 +68,7 @@ function renderCurrentTimerName() {
         currentTimer = 'Rest';
     }
 
-    $('.js-currentTimer').text(currentTimer);
+    $('.js-currentTimerName').text(currentTimer);
 }
 
 $(document).ready(init);
@@ -110,12 +110,14 @@ Pomodoro.prototype.switchTimer = function() {
         this.state = Pomodoro.STATE_COUNTDOWN;
     } else {
         clearInterval(this.timerID);
+        this.timeLeft += Pomodoro.TIMER_DELAY / 1000;
         this.state = Pomodoro.STATE_PAUSE;
     }
 };
 
 Pomodoro.prototype.startTimer = function() {
     this.state = Pomodoro.STATE_COUNTDOWN;
+    this.tick();
     this.timerID = setInterval(this.tick.bind(this), Pomodoro.TIMER_DELAY);
 };
 
