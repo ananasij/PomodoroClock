@@ -4,6 +4,7 @@ function init() {
     pomodoro = new Pomodoro();
     pomodoro.on('tick', renderTimer);
     pomodoro.on('switch', renderCurrentTimerName);
+    pomodoro.on('toggleState', renderSwitchBtn);
 
     renderTimerLength('workTimer');
     renderTimerLength('restTimer');
@@ -22,8 +23,8 @@ function init() {
         renderTimerLength(timer);
     });
 
-    $('.js-btn-switch').on('click', function() {
-        pomodoro.switchTimer();
+    $('.js-switch').on('click', function() {
+        pomodoro.toggleTimerState();
     });
 }
 
@@ -71,6 +72,17 @@ function renderCurrentTimerName() {
     $('.js-currentTimerName').text(currentTimer);
 }
 
+function renderSwitchBtn() {
+    var currentAction = '';
+    if (pomodoro.state === Pomodoro.STATE_COUNTDOWN) {
+        currentAction = 'Pause';
+    } else {
+        currentAction = 'Start';
+    }
+
+    $('.js-btn-switch').text(currentAction);
+}
+
 $(document).ready(init);
 
 // Pomodoro
@@ -82,7 +94,8 @@ function Pomodoro() {
     this.restTimer = 0.1 * 60;
     this.callbacks = {
         tick: null,
-        switch: null
+        switch: null,
+        toggleState: null
     };
     this.resetCountdown();
 }
@@ -104,7 +117,7 @@ Pomodoro.prototype.updateTimer = function(timer, update) {
     }
 };
 
-Pomodoro.prototype.switchTimer = function() {
+Pomodoro.prototype.toggleTimerState = function() {
     if (this.state === Pomodoro.STATE_PAUSE) {
         this.startTimer();
         this.state = Pomodoro.STATE_COUNTDOWN;
@@ -113,6 +126,7 @@ Pomodoro.prototype.switchTimer = function() {
         this.timeLeft += Pomodoro.TIMER_DELAY / 1000;
         this.state = Pomodoro.STATE_PAUSE;
     }
+    this.trigger('toggleState');
 };
 
 Pomodoro.prototype.startTimer = function() {
