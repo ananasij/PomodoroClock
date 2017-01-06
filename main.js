@@ -96,8 +96,8 @@ function Pomodoro() {
     this.phase = null;
     this.timeLeft = 0;
 
-    this.workTimer = 0.15 * 60;
-    this.restTimer = 0.1 * 60;
+    this.workTimer = 25 * 60;
+    this.restTimer = 5 * 60;
     this.callbacks = {
         timeLeftChange: null,
         phaseChange: null,
