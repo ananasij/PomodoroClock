@@ -2,9 +2,9 @@ var pomodoro;
 
 function init() {
     pomodoro = new Pomodoro();
-    pomodoro.on('tick', renderTimer);
-    pomodoro.on('switch', renderCurrentTimerName);
-    pomodoro.on('toggleState', renderSwitchBtn);
+    pomodoro.on('timeLeftChange', renderTimer);
+    pomodoro.on('phaseChange', renderCurrentTimerName);
+    pomodoro.on('stateChange', renderSwitchBtn);
 
     renderTimerLength('workTimer');
     renderTimerLength('restTimer');
@@ -25,6 +25,10 @@ function init() {
 
     $('.js-switch').on('click', function() {
         pomodoro.toggleTimerState();
+    });
+
+    $('.js-btn-reset').on('click', function() {
+        pomodoro.resetCountdown();
     });
 }
 
@@ -88,70 +92,74 @@ $(document).ready(init);
 // Pomodoro
 
 function Pomodoro() {
-    this.state = Pomodoro.STATE_PAUSE;
-    this.phase = Pomodoro.PHASE_WORK;
+    this.state = null;
+    this.phase = null;
+    this.timeLeft = 0;
+
     this.workTimer = 0.15 * 60;
     this.restTimer = 0.1 * 60;
     this.callbacks = {
-        tick: null,
-        switch: null,
-        toggleState: null
+        timeLeftChange: null,
+        phaseChange: null,
+        stateChange: null
     };
     this.resetCountdown();
 }
 
 Pomodoro.STATE_COUNTDOWN = 'STATE_COUNTDOWN';
 Pomodoro.STATE_PAUSE = 'STATE_PAUSE';
+Pomodoro.STATE_START = 'STATE_START';
 Pomodoro.PHASE_WORK = 'PHASE_WORK';
 Pomodoro.PHASE_REST = 'PHASE_REST';
 Pomodoro.TIMER_DELAY = 1000;
 Pomodoro.TIMER_UPDATE_SCALE = 60;
 
 Pomodoro.prototype.resetCountdown = function() {
-    this.timeLeft = this.workTimer;
+    this.setState(Pomodoro.STATE_START);
+    this.setPhase(Pomodoro.PHASE_WORK);
+    this.setTimeLeft(this.workTimer);
+    clearInterval(this.timerID);
 };
 
 Pomodoro.prototype.updateTimer = function(timer, update) {
     if (update > 0 || this[timer] > Pomodoro.TIMER_UPDATE_SCALE) {
         this[timer] += update * Pomodoro.TIMER_UPDATE_SCALE;
     }
+    if (this.state === Pomodoro.STATE_START) {
+        this.setTimeLeft(this.workTimer);
+    }
 };
 
 Pomodoro.prototype.toggleTimerState = function() {
-    if (this.state === Pomodoro.STATE_PAUSE) {
+    if (this.state === Pomodoro.STATE_PAUSE || this.state === Pomodoro.STATE_START) {
         this.startTimer();
-        this.state = Pomodoro.STATE_COUNTDOWN;
+        this.setState(Pomodoro.STATE_COUNTDOWN);
     } else {
         clearInterval(this.timerID);
-        this.timeLeft += Pomodoro.TIMER_DELAY / 1000;
-        this.state = Pomodoro.STATE_PAUSE;
+        this.setState(Pomodoro.STATE_PAUSE);
     }
-    this.trigger('toggleState');
 };
 
 Pomodoro.prototype.startTimer = function() {
-    this.state = Pomodoro.STATE_COUNTDOWN;
-    this.tick();
+    this.setState(Pomodoro.STATE_COUNTDOWN);
     this.timerID = setInterval(this.tick.bind(this), Pomodoro.TIMER_DELAY);
 };
 
 Pomodoro.prototype.tick = function() {
-    if (this.timeLeft < 0) {
+    if (this.timeLeft === 0) {
         this.switchPhase();
+    } else {
+        this.setTimeLeft(this.timeLeft - (Pomodoro.TIMER_DELAY / 1000));
     }
-    this.trigger('tick');
-    this.timeLeft -= Pomodoro.TIMER_DELAY / 1000;
 };
 
 Pomodoro.prototype.switchPhase = function() {
     if (this.phase === Pomodoro.PHASE_WORK) {
-        this.phase = Pomodoro.PHASE_REST;
-        this.timeLeft = this.restTimer;
-        this.trigger('switch');
+        this.setPhase(Pomodoro.PHASE_REST);
+        this.setTimeLeft(this.restTimer);
     } else {
-        this.phase = Pomodoro.PHASE_WORK;
-        this.timeLeft = this.workTimer;
-        this.trigger('switch');
+        this.setPhase(Pomodoro.PHASE_WORK);
+        this.setTimeLeft(this.workTimer);
     }
 };
 
@@ -163,4 +171,19 @@ Pomodoro.prototype.trigger = function(eventName, value) {
     if (this.callbacks[eventName]) {
         this.callbacks[eventName](value);
     }
+};
+
+Pomodoro.prototype.setTimeLeft = function(timeLeft) {
+    this.timeLeft = timeLeft;
+    this.trigger('timeLeftChange');
+};
+
+Pomodoro.prototype.setState = function(state) {
+    this.state = state;
+    this.trigger('stateChange');
+};
+
+Pomodoro.prototype.setPhase = function(phase) {
+    this.phase = phase;
+    this.trigger('phaseChange');
 };
