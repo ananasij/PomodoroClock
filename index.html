@@ -3,22 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title></title>
+    <link rel="stylesheet" href="styles.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Amatic+SC" rel="stylesheet">
     <script src="jquery.min.js"></script>
     <script src="main.js"></script>
 </head>
 <body>
-<h4>Set work session length:</h4>
-<p class="js-timerLength js-workTimerLength"></p>
-<button class="js-btn-updateTimer" data-timer="workTimer" data-update="plus"> + </button>
-<button class="js-btn-updateTimer" data-timer="workTimer" data-update="minus" > - </button>
-<h4>Set rest length:</h4>
-<p class="js-timerLength js-restTimerLength"></p>
-<button class="js-btn-updateTimer" data-timer="restTimer" data-update="plus" > + </button>
-<button class="js-btn-updateTimer" data-timer="restTimer" data-update="minus" > - </button>
-<h4>Start/pause timer:</h4>
-<button class="js-btn-switch"> Start/Pause </button>
-<p class="js-currentTimer"></p>
-<p class="js-timer"></p>
+<div class="content centered">
+    <h1>Pomodoro clock</h1>
+    <div class="settings-container">
+        <div class="settings">
+            <span>Set work timer length:</span>
+            <div class="setting-controls">
+                <a href="#" class="btn control-element js-btn-updateTimer" data-timer="workTimer" data-update="minus"> - </a>
+                <div class="timer-length">
+                    <span class="control-element js-timerLength js-workTimerLength"></span>
+                </div>
+                <a href="#" class="btn control-element js-btn-updateTimer" data-timer="workTimer" data-update="plus" > + </a>
+            </div>
+        </div>
+        <div class="settings">
+            <span>Set rest timer length:</span>
+            <div class="setting-controls">
+                <a href="#" class="btn control-element js-btn-updateTimer" data-timer="restTimer" data-update="minus" > - </a>
+                <div class="timer-length">
+                    <span class="control-element js-timerLength js-restTimerLength"></span>
+                </div>
+                <a href="#" class="btn control-element js-btn-updateTimer" data-timer="restTimer" data-update="plus" > + </a>
+            </div>
+        </div>
+    </div>
+    <div class="timer-container">
+        <div class="timer-progress-bar">
+            <div class="timer js-btn-switch">
+                <div class="timer-data">
+                    <p class="timer-name js-currentTimerName"></p>
+                    <p class="timer-countdown js-timer"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a href="#" class="btn btn-bottom control-element js-btn-switch"> Start </a>
+    <a href="#" class="btn btn-bottom control-element js-btn-switch"> Reset </a>
+
+</div>
+
 
 </body>
 </html>
