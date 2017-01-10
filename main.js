@@ -3,7 +3,7 @@ var pomodoro;
 function init() {
     pomodoro = new Pomodoro();
     pomodoro.on('timeLeftChange', renderTimer);
-    pomodoro.on('phaseChange', renderCurrentTimerName);
+    pomodoro.on('phaseChange', switchTimer);
     pomodoro.on('stateChange', renderSwitchBtn);
 
     renderTimerLength('workTimer');
@@ -74,6 +74,7 @@ function renderCurrentTimerName() {
     }
 
     $('.js-currentTimerName').text(currentTimer);
+    playAlarm();
 }
 
 function renderSwitchBtn() {
@@ -85,6 +86,18 @@ function renderSwitchBtn() {
     }
 
     $('.js-btn-switch').text(currentAction);
+}
+
+function playAlarm() {
+    var sound = new Audio('https://www.freesound.org/data/previews/268/268756_3047055-lq.mp3');
+    if (pomodoro.state !== Pomodoro.STATE_START) {
+        sound.play();
+    }
+}
+
+function switchTimer() {
+    renderCurrentTimerName();
+    playAlarm();
 }
 
 $(document).ready(init);
