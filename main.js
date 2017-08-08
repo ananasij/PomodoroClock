@@ -89,7 +89,7 @@ function renderSwitchBtn() {
 }
 
 function playAlarm() {
-    var sound = new Audio('https://www.freesound.org/data/previews/268/268756_3047055-lq.mp3');
+    var sound = new Audio('timersound.mp3');
     if (pomodoro.state !== Pomodoro.STATE_START) {
         sound.play();
     }
